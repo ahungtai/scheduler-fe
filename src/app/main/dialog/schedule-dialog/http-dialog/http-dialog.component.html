@@ -1,0 +1,167 @@
+<app-dialog [title]="title" [windowClassName]="'cui-col-xs32-10 cui-col-sm-8'" [onClose]="cancel">
+  <div class="cui-button-row">
+    <button class="cui-button" (click)="copy()">复制</button>
+  </div>
+  <app-shrink [shadow]="true">
+    <h3 shrink-title>
+      排程設定
+    </h3>
+    <div class="space-3"></div>
+    <div class="cui-field" notTranslate>
+      <select [(ngModel)]="jobKind" (change)="jobKindChange()" [disabled]="state==BasicState.Update" required>
+        <option *ngFor="let job of jobKinds" [ngValue]="job">{{job.jobName}}</option>
+      </select>
+      <label>排程類型</label>
+    </div>
+    <div class="cui-field">
+      <input type="text" [(ngModel)]="form.jobName" [disabled]="state==BasicState.Update" required>
+      <label>排程名稱</label>
+    </div>
+    <div class="cui-field">
+      <input type="text" [(ngModel)]="form.cron" required>
+      <label>排程時間</label>
+      <div class="message">*(秒) *(分) *(时) *(日) *(月) ?(周)</div>
+    </div>
+    <div class="cui-field cui-col-xs32-6">
+      <input type="text" [(ngModel)]="form.jobData.fail.retry" required>
+      <label>失敗重试次数</label>
+    </div>
+    <div class="cui-field cui-col-xs32-6">
+      <input type="text" [(ngModel)]="form.jobData.fail.interval" required>
+      <label>间隔时间</label>
+      <div class="message">毫秒</div>
+    </div>
+    <div class="cui-field">
+      <textarea rows="2" [(ngModel)]="form.description"></textarea>
+      <label>備註</label>
+    </div>
+  </app-shrink>
+  <app-shrink [shadow]="true">
+    <h3 shrink-title>
+      Http Request 設定
+      <button class="cui-button" (click)="test(form.jobData.httpServiceId,form.jobData.http)">測試</button>
+    </h3>
+    <div class="space-3"></div>
+    <ng-container *ngIf="jobKind">
+      <div class="cui-field" *ngIf="jobKind.jobGroup==feignClient">
+        <select [(ngModel)]="form.jobData.httpServiceId" required>
+          <option value="">不使用</option>
+          <option *ngFor="let service of services" [value]="service">{{service}}</option>
+        </select>
+        <label>服務</label>
+        <div class="message">註冊在 eureka 的服務</div>
+      </div>
+    </ng-container>
+    <div class="cui-field cui-col-xs32-8">
+      <input type="text" [(ngModel)]="form.jobData.http.url" required>
+      <label>{{form.jobData.httpServiceId?'Path':'URL'}}</label>
+    </div>
+    <div class="cui-field cui-col-xs32-4" notTranslate>
+      <select [(ngModel)]="form.jobData.http.method">
+        <option value="get">GET</option>
+        <option value="post">POST</option>
+        <option value="put">PUT</option>
+        <option value="delete">DELETE</option>
+      </select>
+      <label>Method</label>
+    </div>
+    <div class="cui-field cui-col-xs32-6">
+      <textarea rows="5" [(ngModel)]="form.jobData.http.headers"></textarea>
+      <label>Headers</label>
+      <div class="message">key:value//換行</div>
+    </div>
+    <div class="cui-field cui-col-xs32-6">
+      <textarea rows="5" [(ngModel)]="form.jobData.http.params"></textarea>
+      <label>Paramters</label>
+      <div class="message">key:value//換行</div>
+    </div>
+    <div class="cui-field cui-col-xs32-12">
+      <textarea rows="3" [(ngModel)]="form.jobData.http.body" (blur)="httpBodyBlur()"></textarea>
+      <label>Body</label>
+    </div>
+    <div class="cui-field cui-col-xs32-6">
+      <input type="text" [(ngModel)]="form.jobData.http.connectionTimeout">
+      <label>Connection Timeout</label>
+      <div class="message">毫秒</div>
+    </div>
+    <div class="cui-field cui-col-xs32-6">
+      <input type="text" [(ngModel)]="form.jobData.http.readTimeout">
+      <label>Read Timeout</label>
+      <div class="message">毫秒</div>
+    </div>
+  </app-shrink>
+  <div class="cui-field cui-col-xs32-4" notTranslate>
+    <select [(ngModel)]="form.jobData.authType">
+      <option value="0">無</option>
+      <option value="1">Cookie</option>
+      <option value="2">OAuth</option>
+      <option value="3">OAuth2</option>
+    </select>
+    <label>驗證類型</label>
+  </div>
+  <app-shrink [shadow]="true" *ngIf="form.jobData.authType!=0">
+    <h3 shrink-title>
+      驗證設定
+      <button class="cui-button" (click)="test(form.jobData.authServiceId,form.jobData.auth)">測試</button>
+    </h3>
+    <div class="space-3"></div>
+    <ng-container *ngIf="jobKind">
+      <div class="cui-field" *ngIf="jobKind.jobGroup==feignClient">
+        <select [(ngModel)]="form.jobData.authServiceId" required>
+          <option value="">不使用</option>
+          <option *ngFor="let service of services" [value]="service">{{service}}</option>
+        </select>
+        <label>服務</label>
+        <div class="message">註冊在 eureka 的服務</div>
+      </div>
+    </ng-container>
+    <div class="cui-field cui-col-xs32-8">
+      <input type="text" [(ngModel)]="form.jobData.auth.url" required>
+      <label>{{form.jobData.authServiceId?'Path':'URL'}}</label>
+    </div>
+    <div class="cui-field cui-col-xs32-4" notTranslate>
+      <select [(ngModel)]="form.jobData.auth.method">
+        <option value="get">GET</option>
+        <option value="post">POST</option>
+        <option value="put">PUT</option>
+        <option value="delete">DELETE</option>
+      </select>
+      <label>Method</label>
+    </div>
+    <div class="cui-field cui-col-xs32-6">
+      <textarea rows="5" [(ngModel)]="form.jobData.auth.headers"></textarea>
+      <label>Headers</label>
+      <div class="message">key:value//換行</div>
+    </div>
+    <div class="cui-field cui-col-xs32-6">
+      <textarea rows="5" [(ngModel)]="form.jobData.auth.params"></textarea>
+      <label>Paramters</label>
+      <div class="message">key:value//換行</div>
+    </div>
+    <div class="cui-field cui-col-xs32-12">
+      <textarea rows="3" [(ngModel)]="form.jobData.auth.body" (blur)="authBodyBlur()"></textarea>
+      <label>Body</label>
+    </div>
+    <div class="cui-field cui-col-xs32-6">
+      <input type="text" [(ngModel)]="form.jobData.auth.connectionTimeout">
+      <label>Connection Timeout</label>
+      <div class="message">毫秒</div>
+    </div>
+    <div class="cui-field cui-col-xs32-6">
+      <input type="text" [(ngModel)]="form.jobData.auth.readTimeout">
+      <label>Read Timeout</label>
+      <div class="message">毫秒</div>
+    </div>
+    <div class="cui-field cui-col-xs32-12">
+      <input type="text" [(ngModel)]="form.jobData.authSpel">
+      <label>Auth Spel</label>
+      <div class="message">Token表達式 ex: #result.data.token or #header.cookie</div>
+    </div>
+  </app-shrink>
+  <div class="cui-button-row right">
+    <button class="cui-button" (click)="save()">提交</button>
+    <button class="cui-button bg-accent" (click)="close()">取消</button>
+  </div>
+  <div class="cui-row" [innerHTML]="message|safeHtml">
+  </div>
+</app-dialog>

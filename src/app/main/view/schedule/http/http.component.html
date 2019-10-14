@@ -1,0 +1,14 @@
+<app-shrink>
+  <div class="cui-row">
+    <div class="cui-field cui-col-xs32-6 cui-col-xs64-4 cui-col-md-3">
+      <input type="text" [(ngModel)]="name">
+      <label>排程名稱</label>
+    </div>
+  </div>
+  <div class="cui-button-row center">
+    <button class="cui-button {{ApiClassName.GetSchedulePage}}" (click)="search()">查詢</button>
+    <button class="cui-button {{ApiClassName.PostScheduleJob}}" (click)="add()">新增</button>
+  </div>
+</app-shrink>
+<div class="view-content" [appInitElement]="grid.getElement()"></div>
+<app-http-dialog [onComplete]="onComplete"></app-http-dialog>
