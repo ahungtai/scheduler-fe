@@ -13,7 +13,7 @@
   border-right: 1px solid #ddd;
   opacity: 0;
   overflow-y: auto;
-  background-color: #344149;
+  background-color: #2196F3;
   pointer-events: none;
   @include transition(all .3s ease-in-out);
 
@@ -32,7 +32,7 @@
       letter-spacing: 5px;
       text-align: center;
       // text-shadow: 1px 1px 5px #34383a;
-      background-color: #344149;
+      background-color: #2196F3;
       color: #fff;
       cursor: pointer;
     }

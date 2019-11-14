@@ -10,6 +10,7 @@ import { DomUtil } from 'ts/util/dom-util';
 import { GridRenderUtil } from 'ts/util/grid-render-util';
 import { WebSession } from 'ts/data/entity/auth-user';
 import { SessionService } from 'ts/service/core/session-service';
+import { DateUtil } from 'ts/util/date-util';
 
 
 @Component({
@@ -78,12 +79,20 @@ export class SessionComponent extends BasicComponent {
           }
         }
         , { value: 'id', name: 'Session ID', align: 'left', width: '1%', canSort: true, sort: Grid.Sort.Asc }
-        , { value: 'name', name: '使用者', align: 'left', width: '1%', canSort: true, sort: Grid.Sort.Asc }
-        , { value: 'createTime', name: '建立時間', align: 'left', width: '1%', onRender: GridRenderUtil.date }
-        , { value: 'lastAccessedTime', name: '最後訪問時間', align: 'left', width: '1%', onRender: GridRenderUtil.date }
-        , { value: 'maxInactiveInterval', name: '最大存活時間', align: 'center', width: '100%' }
-      ],
-      onLoad: (pageable: Grid.IPageable, callback: Grid.ILoad) => {
+        // , { value: 'name', name: '使用者', align: 'left', width: '1%', canSort: true, sort: Grid.Sort.Asc }
+        , { value: 'createTime', name: '建立時間', align: 'left', width: '1%', canSort: true, onRender: GridRenderUtil.date }
+        , { value: 'lastAccessTime', name: '最後訪問時間', align: 'left', width: '1%', canSort: true, onRender: GridRenderUtil.date }
+        , { value: 'maxInactiveInterval', name: '最大存活時間', align: 'center', width: '1%' }
+        , {
+          value: 'lastAccessTime', name: '有效時間', align: 'center', width: '100%', onRender: (value, record, index) => {
+            return GridRenderUtil.date(value + record.maxInactiveInterval, record, index);
+          }
+        }
+      ]
+      , contentColumns: [
+        , { value: 'attributes', name: '', align: 'left', width: '1%', element: true, onRender: GridRenderUtil.json }
+      ]
+      , onLoad: (pageable: Grid.IPageable, callback: Grid.ILoad) => {
         SessionService.query(pageable, (result) => {
           if (result.success) {
             this.cdf.markForCheck();

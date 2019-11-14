@@ -18,11 +18,6 @@ export class PingerService {
 	// 低於這個時間就開始倒數
 	private static countdownStartTime = 45000;
 	private static countdownCheckInterval = 5000;
-	// 恢復
-	private static button: HTMLButtonElement;
-
-	constructor() {
-	}
 
 
 	/**
@@ -84,6 +79,7 @@ export class PingerService {
 		if (!PingerService.timeout) {
 			return;
 		}
+		console.log('count', PingerService.timeout, PingerService.countdownStartTime);
 		if (PingerService.timeout < 0) {
 			PingerService.timeUp();
 		} else if (PingerService.timeout < PingerService.countdownStartTime) {
@@ -92,11 +88,11 @@ export class PingerService {
 				PingerService.isCountDown = true;
 			}
 			PingerService.doCountDown();
-			clearTimeout(PingerService.checkTimer);
 			let nextCheckTime = PingerService.countdownCheckInterval;
 			if (nextCheckTime > PingerService.timeout) {
 				nextCheckTime = PingerService.timeout;
 			}
+			clearTimeout(PingerService.checkTimer);
 			PingerService.checkTimer = setTimeout(PingerService.check, nextCheckTime);
 		} else {
 			if (PingerService.isCountDown) {
@@ -123,8 +119,6 @@ export class PingerService {
 	 * 顯示提醒
 	 */
 	private static showMessage() {
-		PingerService.createButtin();
-		Global.loader.getElement().querySelector('.cui-loader-block').appendChild(PingerService.button);
 		Global.loader.open();
 		PingerService.doCountDown();
 	}
@@ -134,7 +128,6 @@ export class PingerService {
 	 */
 	private static closeMessage() {
 		Global.loader.close();
-		CUI.remove(PingerService.button);
 	}
 
 	/**
@@ -163,25 +156,5 @@ export class PingerService {
 			}
 			alert('系統閒置太長，已登出!');
 		});
-	}
-
-	/**
-	 * 恢復按鈕動作
-	 */
-	private static restore() {
-		PingerService.stop();
-		BasicService.init();
-	}
-
-	/**
-	 * 產生恢復按鈕
-	 */
-	private static createButtin() {
-		if (!PingerService.button) {
-			PingerService.button = document.createElement('button');
-			PingerService.button.className = 'cui-button small';
-			PingerService.button.innerHTML = '繼續';
-			PingerService.button.addEventListener('click', PingerService.restore);
-		}
 	}
 }

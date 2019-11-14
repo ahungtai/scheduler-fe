@@ -32,13 +32,6 @@ export const AuthUserNode = new StoreNode<AuthUser>({
 });
 
 /**
- * 特徵碼
- */
-export const FeatureNode = new StoreNode<string>({
-    id: 'Feature'
-});
-
-/**
  * 語系
  */
 export const LangNode = new StoreNode<string>({

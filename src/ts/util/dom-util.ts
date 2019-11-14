@@ -1,5 +1,4 @@
 import { RoleUtil } from './role-util';
-import { Async } from '@cui/core';
 
 interface DefaultConfig {
     text: string;

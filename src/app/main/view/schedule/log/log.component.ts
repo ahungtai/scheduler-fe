@@ -91,7 +91,7 @@ export class LogComponent extends BasicComponent {
     }
     let param = CUI.deepClone(this.searchForm);
     param.startTime = DateUtil.time(param.startTime);
-    param.endTime = DateUtil.time(param.endTime) + 999;;
+    param.endTime = DateUtil.time(param.endTime) + 999;
     ScheduleLogService.remove(param, (result) => {
       if (result.success) {
         this.grid.load();
@@ -135,7 +135,7 @@ export class LogComponent extends BasicComponent {
         let param = CUI.deepClone({}, pageable);
         CUI.deepClone(param, this.searchForm);
         param.startTime = DateUtil.time(param.startTime);
-        param.endTime = DateUtil.time(param.endTime) + 999;;
+        param.endTime = DateUtil.time(param.endTime) + 999;
         ScheduleLogService.page(param, (result) => {
           if (result.success) {
             callback(result.data);
@@ -162,7 +162,7 @@ export class LogComponent extends BasicComponent {
       ]
       , contentColumns: [
         {
-          value: 'value', name: 'value', element: true, onRender: GridRenderUtil.viewerJson
+          value: 'value', name: 'value', element: true, onRender: GridRenderUtil.keyJson
         }
       ]
     });

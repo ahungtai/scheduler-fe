@@ -55,7 +55,7 @@ export class UserService {
 
 		let _formData = CUI.deepClone(formData);
 		// 先取得公鑰
-		BasicService.wowKey(function (result) {
+		BasicService.wow(function (result) {
 			if (result.success) {
 				let jsencrypt = new JSEncrypt();
 				jsencrypt.setPublicKey(result.data);
@@ -69,9 +69,7 @@ export class UserService {
 					callback: callback
 				});
 			} else {
-				BasicService.featureKey(() => {
-					callback(result);
-				});
+				callback(result);
 			}
 		});
 	}
@@ -109,7 +107,7 @@ export class UserService {
 
 		let _formData = CUI.deepClone(formData);
 		// 先取得公鑰
-		BasicService.wowKey(function (result) {
+		BasicService.wow(function (result) {
 			if (result.success) {
 				let jsencrypt = new JSEncrypt();
 				jsencrypt.setPublicKey(result.data);
@@ -123,9 +121,7 @@ export class UserService {
 					callback: callback
 				});
 			} else {
-				BasicService.featureKey(() => {
-					callback(result);
-				});
+				callback(result);
 			}
 		});
 	}

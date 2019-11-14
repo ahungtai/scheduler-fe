@@ -55,7 +55,7 @@ export class SelfService {
 		Asserts.isEquals(formData.newPassword, formData.confirmPassword, 'new password and confirm password' + Asserts.NotSame);
 
 		let _formData = CUI.deepClone(formData);
-		BasicService.wowKey(function (result) {
+		BasicService.wow(function (result) {
 			if (result.success) {
 				let jsencrypt = new JSEncrypt();
 				jsencrypt.setPublicKey(result.data);
@@ -68,9 +68,7 @@ export class SelfService {
 					callback: callback
 				});
 			} else {
-				BasicService.featureKey(() => {
-					callback(result);
-				});
+				callback(result);
 			}
 		});
 	}

@@ -6,7 +6,7 @@ import {
   IAjaxManagerResult
 } from '@cui/core';
 import { AppCommonModule } from '../app-common/app-common.module';
-import { AuthUserNode, FeatureNode, SubscriptionsNode } from 'ts/data/node/common';
+import { AuthUserNode, SubscriptionsNode } from 'ts/data/node/common';
 import { BasicService } from 'ts/service/core/basic-service';
 import { CommonDialogModule } from './dialog/common-dialog/common-dialog.module';
 import { CommonModule } from '@angular/common';
@@ -71,7 +71,16 @@ export class MainModule {
 
   private initCheck = false;
 
+  private openWindow = false;
+  private originConfirm;
+  private originAlert;
+
   constructor() {
+    this.originConfirm = window.confirm;
+    this.originAlert = window.alert;
+    window.confirm = this.proxyConfirm.bind(this);
+    window.alert = this.proxyAlert.bind(this);
+
     // 增加ajax攔截器
     Global.ajaxManager.addBeforeCallback(this.ajaxBeforeCallback);
     Global.ajaxManager.addBeforeRequest(this.ajaxBeforeRequest);
@@ -79,10 +88,14 @@ export class MainModule {
     this.initCheck = true;
     BasicService.init();
 
-    window.addEventListener('focus', (e) => {
-      this.initCheck = true;
-      BasicService.init();
-    });
+    // window.addEventListener('focus', (e: Event) => {
+    //   if (this.openWindow) {
+    //     this.openWindow = false;
+    //   } else {
+    // this.initCheck = true;
+    // BasicService.init();
+    //   }
+    // });
     AuthUserNode.listen(() => {
       if (AuthUserNode.get()) {
         UserService.combobox((result) => {
@@ -92,6 +105,16 @@ export class MainModule {
         Global.userCombobox = { array: [], map: {} };
       }
     }, true);
+  }
+
+  private proxyConfirm = (message?: string): boolean => {
+    this.openWindow = true;
+    return this.originConfirm.call(window, message);
+  }
+
+  private proxyAlert = (message?: string): boolean => {
+    this.openWindow = true;
+    return this.originAlert.call(window, message);
   }
 
   /**
@@ -146,9 +169,6 @@ export class MainModule {
           case 'User':
             AuthUserNode.set(value);
             RoleUtil.updatePermissionStyle();
-            break;
-          case 'Feature':
-            FeatureNode.set(value);
             break;
           case 'Timeout':
             if (value <= 0) {

@@ -20,7 +20,6 @@ export namespace Cache {
         SessionStorageManager.clean(id);
     }
 
-
     /**
      *
      * @param scope 取得緩存資料

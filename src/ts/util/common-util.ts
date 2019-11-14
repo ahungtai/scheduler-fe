@@ -1,4 +1,4 @@
-import { CUI } from '@cui/core';
+import { CUI, Combobox } from '@cui/core';
 
 export class CommonUtil {
     /**
@@ -18,6 +18,18 @@ export class CommonUtil {
             return obj;
         } else if (typeof obj === 'string') {
             return obj.trim();
+        }
+    }
+
+    public static sortStringOrNumber(array: Combobox[]) {
+        if (array) {
+            array.sort((a, b) => {
+                if (isNaN(a.value) || isNaN(b.value)) {
+                    return String(a.value).localeCompare(String(b.value));
+                } else {
+                    return Number(a.value) > Number(b.value) ? 1 : Number(a.value) == Number(b.value) ? 0 : -1;
+                }
+            });
         }
     }
 }

@@ -78,7 +78,7 @@ export class GridRenderUtil {
                 , headers: headers
                 , params: params
                 , body: copyValue.bodyString
-            })
+            });
         }
         let copy = DomUtil.buildButton({
             text: 'copy',

@@ -1,7 +1,6 @@
 import { AjaxMethod, AjaxTryCatch, CUI } from '@cui/core';
 import { ApiPath } from '../../constant/api';
 import { Asserts } from '../../util/asserts';
-import { FeatureNode } from '../../data/node/common';
 import { Global } from '../../globle';
 import { JSEncrypt } from 'jsencrypt';
 
@@ -23,28 +22,14 @@ export class BasicService {
 	}
 
 	/**
-	 * 取得特徵key
-	 * @param {Function} callback
-	 */
-	@AjaxTryCatch(0)
-	public static featureKey(callback) {
-		Global.ajaxManager.request({
-			url: ApiPath.PostPublicFeature
-			, method: AjaxMethod.POST
-			, callback: callback
-		});
-	}
-
-	/**
 	 * 透過特徵key取得公鑰
 	 * @param {Function} callback
 	 */
 	@AjaxTryCatch(0)
-	public static wowKey(callback) {
+	public static wow(callback) {
 		Global.ajaxManager.request({
 			url: ApiPath.PostPublicWow
 			, method: AjaxMethod.POST
-			, data: { feature: FeatureNode.get() }
 			, background: true
 			, callback: callback
 		});
@@ -62,7 +47,7 @@ export class BasicService {
 		Asserts.notEmpty(formData.password, 'password' + Asserts.NotEmptyMessage);
 		let _formData = CUI.deepClone(formData);
 		// 先取得公鑰
-		BasicService.wowKey((result) => {
+		BasicService.wow((result) => {
 			if (result.success) {
 				let jsencrypt = new JSEncrypt();
 				jsencrypt.setPublicKey(result.data);
@@ -74,9 +59,7 @@ export class BasicService {
 					, callback: callback
 				});
 			} else {
-				BasicService.featureKey(() => {
-					callback(result);
-				});
+				callback(result);
 			}
 		});
 	}
