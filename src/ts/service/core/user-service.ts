@@ -1,10 +1,21 @@
-import { AjaxMethod, AjaxTryCatch, CUI, AjaxUtil, Combobox, ComboboxCallback, ComboboxData } from '@cui/core';
+import {
+	AjaxMethod,
+	AjaxTryCatch,
+	AjaxUtil,
+	Combobox,
+	ComboboxCallback,
+	ComboboxData,
+	CUI,
+	IAjaxManagerResult,
+	IAjaxManagerResultCallback
+} from '@cui/core';
 import { ApiPath } from '../../constant/api';
 import { Asserts } from '../../util/asserts';
 import { BasicService } from './basic-service';
 import { environment } from '@environment';
 import { Global } from '../../globle';
 import { JSEncrypt } from 'jsencrypt';
+import { User } from 'ts/data/entity/entity';
 
 /**
  * 超級管理使用者
@@ -35,7 +46,7 @@ export class UserService {
 	 * @param {Function} callback
 	 */
 	@AjaxTryCatch(1)
-	public static page(formData, callback) {
+	public static page(formData, callback: IAjaxManagerResultCallback) {
 		Global.ajaxManager.request({
 			url: ApiPath.GetUserPage,
 			data: formData,
@@ -49,13 +60,13 @@ export class UserService {
 	 * @param {Function} callback
 	 */
 	@AjaxTryCatch(1)
-	public static add(formData, callback) {
+	public static add(formData, callback: IAjaxManagerResultCallback) {
 		Asserts.notEmpty(formData.account, 'account' + Asserts.NotEmptyMessage);
 		Asserts.notEmpty(formData.password, 'password' + Asserts.NotEmptyMessage);
 
 		let _formData = CUI.deepClone(formData);
 		// 先取得公鑰
-		BasicService.wow(function (result) {
+		BasicService.wow((result) => {
 			if (result.success) {
 				let jsencrypt = new JSEncrypt();
 				jsencrypt.setPublicKey(result.data);
@@ -80,14 +91,19 @@ export class UserService {
 	 * @param {Function} callback
 	 */
 	@AjaxTryCatch(1)
-	public static modify(formData, callback) {
-		Asserts.notEmpty(formData.id, 'id' + Asserts.NotEmptyMessage);
+	public static modify(formData: User, callback: IAjaxManagerResultCallback) {
+		Asserts.notNull(formData.id, 'id' + Asserts.NotEmptyMessage);
 		Global.ajaxManager.request({
 			url: ApiPath.PutUser,
 			method: AjaxMethod.PUT,
 			headers: AjaxUtil.ContentTypeJson,
 			data: JSON.stringify(formData),
-			callback: callback
+			callback: (result) => {
+				if (result.success && formData.id == Global.authUser.id) {
+					BasicService.init();
+				}
+				callback(result);
+			}
 		});
 	}
 
@@ -97,7 +113,7 @@ export class UserService {
 	 * @param {Function} callback
 	 */
 	@AjaxTryCatch(1)
-	public static modifyPassword(formData, callback) {
+	public static modifyPassword(formData, callback: IAjaxManagerResultCallback) {
 		Asserts.notEmpty(formData.password, 'password' + Asserts.NotEmptyMessage);
 		Asserts.notEmpty(formData.newPassword, 'new password' + Asserts.NotEmptyMessage);
 		Asserts.notEmpty(formData.confirmPassword, 'confirm password' + Asserts.NotEmptyMessage);
@@ -107,7 +123,7 @@ export class UserService {
 
 		let _formData = CUI.deepClone(formData);
 		// 先取得公鑰
-		BasicService.wow(function (result) {
+		BasicService.wow((result) => {
 			if (result.success) {
 				let jsencrypt = new JSEncrypt();
 				jsencrypt.setPublicKey(result.data);
@@ -132,7 +148,7 @@ export class UserService {
 	 * @param {Function} callback
 	 */
 	@AjaxTryCatch(1)
-	public static resetPassword(formData, callback) {
+	public static resetPassword(formData, callback: IAjaxManagerResultCallback) {
 		Asserts.notEmpty(formData.id, 'id' + Asserts.NotEmptyMessage);
 		Global.ajaxManager.request({
 			url: ApiPath.PutUserPasswordReset,
@@ -148,7 +164,7 @@ export class UserService {
 	 * @param {Function} callback
 	 */
 	@AjaxTryCatch(1)
-	public static enable(id: number, callback) {
+	public static enable(id: number, callback: IAjaxManagerResultCallback) {
 		Asserts.notNull(id, 'id' + Asserts.NotEmptyMessage);
 		Global.ajaxManager.request({
 			url: ApiPath.PutUserEnable,
@@ -164,7 +180,7 @@ export class UserService {
 	 * @param {Function} callback
 	 */
 	@AjaxTryCatch(1)
-	public static disable(id: number, callback) {
+	public static disable(id: number, callback: IAjaxManagerResultCallback) {
 		Asserts.notNull(id, 'id' + Asserts.NotEmptyMessage);
 		Global.ajaxManager.request({
 			url: ApiPath.PutUserDisable,
@@ -180,7 +196,7 @@ export class UserService {
 	 * @param {Function} callback
 	 */
 	@AjaxTryCatch(1)
-	public static lock(id: number, callback) {
+	public static lock(id: number, callback: IAjaxManagerResultCallback) {
 		Asserts.notNull(id, 'id' + Asserts.NotEmptyMessage);
 		Global.ajaxManager.request({
 			url: ApiPath.PutUserLock,
@@ -196,7 +212,7 @@ export class UserService {
 	 * @param {Function} callback
 	 */
 	@AjaxTryCatch(1)
-	public static unlock(id: number, callback) {
+	public static unlock(id: number, callback: IAjaxManagerResultCallback) {
 		Asserts.notNull(id, 'id' + Asserts.NotEmptyMessage);
 		Global.ajaxManager.request({
 			url: ApiPath.PutUserUnlock,

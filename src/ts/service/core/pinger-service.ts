@@ -2,7 +2,7 @@ import { ApiPath } from '../../constant/api';
 import { BasicService } from './basic-service';
 import { DateUtil } from '../../util/date-util';
 import { Global } from '../../globle';
-import { CUI, AjaxMethod } from '@cui/core';
+import { AjaxMethod } from '@cui/core';
 
 
 
@@ -31,7 +31,7 @@ export class PingerService {
 		} else {
 			Global.ajaxManager.request({
 				background: true,
-				url: ApiPath.PostPingerInit,
+				url: ApiPath.PostPingerCheck,
 				method: AjaxMethod.POST,
 				callback: (result) => {
 					if (result.success) {
@@ -79,7 +79,6 @@ export class PingerService {
 		if (!PingerService.timeout) {
 			return;
 		}
-		console.log('count', PingerService.timeout, PingerService.countdownStartTime);
 		if (PingerService.timeout < 0) {
 			PingerService.timeUp();
 		} else if (PingerService.timeout < PingerService.countdownStartTime) {

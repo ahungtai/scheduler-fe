@@ -68,13 +68,13 @@ export class RolePermissionComponent extends BasicComponent {
           return;
         }
         this.cdf.markForCheck();
-        this.allRoutes = result.routes;
+        this.allRoutes = result.data.routes;
         this.routes = [];
         this.childs = {};
-        this.apis = result.apis;
+        this.apis = result.data.apis;
         let api: PermissionAPI;
-        let apiIds: number[] = result.apiIds;
-        let routeIds: number[] = result.routeIds;
+        let apiIds: number[] = result.data.apiIds;
+        let routeIds: number[] = result.data.routeIds;
 
         let route, parentId, useApiIds: Apis;
         for (let i in this.apis) {

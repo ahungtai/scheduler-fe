@@ -52,12 +52,13 @@ export interface AuthRoute {
 
 
 /**
- * WebSession
+ * RequestSession
  */
-export interface WebSession {
+export interface RequestSession {
     id: string;
     maxInactiveInterval: number;
     createTime: number;
     lastAccessedTime: number;
-    name: string;
+    username: string;
+    attributes: string;
 }

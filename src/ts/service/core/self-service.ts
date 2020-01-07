@@ -36,7 +36,12 @@ export class SelfService {
 			method: AjaxMethod.PUT,
 			headers: AjaxUtil.ContentTypeJson,
 			data: JSON.stringify(formData),
-			callback: callback
+			callback: (result) => {
+				if (result.success) {
+					BasicService.init();
+				}
+				callback(result);
+			}
 		});
 	}
 

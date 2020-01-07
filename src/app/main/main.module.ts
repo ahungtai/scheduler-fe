@@ -23,8 +23,9 @@ import { MenuComponent } from './menu/menu.component';
 import { NgModule } from '@angular/core';
 import { PingerService } from 'ts/service/core/pinger-service';
 import { RoleUtil } from 'ts/util/role-util';
-import { RouterModule, Routes } from '@angular/router';
+import { RouterModule, Routes, Router } from '@angular/router';
 import { UserService } from 'ts/service/core/user-service';
+import { AppRoute } from 'ts/ng/router/app';
 
 @NgModule({
   imports: [
@@ -75,11 +76,11 @@ export class MainModule {
   private originConfirm;
   private originAlert;
 
-  constructor() {
+  constructor(private router: Router) {
     this.originConfirm = window.confirm;
     this.originAlert = window.alert;
-    window.confirm = this.proxyConfirm.bind(this);
-    window.alert = this.proxyAlert.bind(this);
+    window.confirm = this.proxyConfirm;
+    window.alert = this.proxyAlert;
 
     // 增加ajax攔截器
     Global.ajaxManager.addBeforeCallback(this.ajaxBeforeCallback);
@@ -88,21 +89,25 @@ export class MainModule {
     this.initCheck = true;
     BasicService.init();
 
-    // window.addEventListener('focus', (e: Event) => {
-    //   if (this.openWindow) {
-    //     this.openWindow = false;
-    //   } else {
-    // this.initCheck = true;
-    // BasicService.init();
-    //   }
-    // });
+    window.addEventListener('focus', (e: Event) => {
+      if (this.openWindow) {
+        this.openWindow = false;
+      } else {
+        this.initCheck = true;
+        BasicService.init();
+      }
+    });
     AuthUserNode.listen(() => {
       if (AuthUserNode.get()) {
         UserService.combobox((result) => {
           Global.userCombobox = result;
         });
+        if (this.router.url == AppRoute.Main.Login.join('/')) {
+          this.router.navigate(AppRoute.Main.Default);
+        }
       } else {
         Global.userCombobox = { array: [], map: {} };
+        this.router.navigate(AppRoute.Main.Login);
       }
     }, true);
   }
@@ -166,18 +171,18 @@ export class MainModule {
       for (let key in result.refresh) {
         value = result.refresh[key];
         switch (key) {
-          case 'User':
+          case 'user':
             AuthUserNode.set(value);
             RoleUtil.updatePermissionStyle();
             break;
-          case 'Timeout':
+          case 'timeout':
             if (value <= 0) {
               PingerService.stop();
             } else {
               PingerService.start(value);
             }
             break;
-          case 'Subscriptions':
+          case 'subscriptions':
             SubscriptionsNode.set(value);
             break;
         }

@@ -1,4 +1,4 @@
-import { AjaxMethod, AjaxTryCatch, CUI } from '@cui/core';
+import { AjaxMethod, AjaxTryCatch, CUI, IAjaxManagerResultCallback } from '@cui/core';
 import { ApiPath } from '../../constant/api';
 import { Asserts } from '../../util/asserts';
 import { Global } from '../../globle';
@@ -26,7 +26,7 @@ export class BasicService {
 	 * @param {Function} callback
 	 */
 	@AjaxTryCatch(0)
-	public static wow(callback) {
+	public static wow(callback: IAjaxManagerResultCallback) {
 		Global.ajaxManager.request({
 			url: ApiPath.PostPublicWow
 			, method: AjaxMethod.POST
