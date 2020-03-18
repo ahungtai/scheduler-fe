@@ -8,8 +8,9 @@ import {
 } from '@angular/core';
 import { BasicComponent } from 'app/basic-component';
 import { BasicService } from 'ts/service/core/basic-service';
-import { CUI } from '@cui/core';
+import { CUI, AjaxUtil } from '@cui/core';
 import { Global } from 'ts/globle';
+import { LangNode } from 'ts/data/node/common';
 
 @Component({
   selector: 'app-login',
@@ -18,6 +19,7 @@ import { Global } from 'ts/globle';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class LoginComponent extends BasicComponent implements AfterViewInit {
+  public lang = LangNode.get();
 
   @ViewChild('loginWindow') loginWindowRef: ElementRef;
   private loginWindow: HTMLElement;
@@ -55,9 +57,12 @@ export class LoginComponent extends BasicComponent implements AfterViewInit {
     BasicService.login(this.form, (result) => {
       Global.loader.close();
       if (!result.success) {
-        this.errorMessage = result.message;
+        this.errorMessage = AjaxUtil.getMessage(result);
       }
       this.cdf.markForCheck();
     });
+  }
+  public langChange() {
+    LangNode.set(this.lang);
   }
 }

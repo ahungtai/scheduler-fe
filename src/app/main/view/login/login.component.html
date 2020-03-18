@@ -5,6 +5,15 @@
       <div class="errorMessage">
         {{errorMessage}}
       </div>
+
+      <div class="cui-field">
+        <select [(ngModel)]="lang" (change)="langChange()">
+          <option value="en">英文</option>
+          <option value="zh_TW">中文(繁體)</option>
+          <option value="zh_CN">中文(簡體)</option>
+        </select>
+        <label>語言</label>
+      </div>
       <div class="cui-field">
         <input type="text" [(ngModel)]="form.account" required>
         <label>帳號</label>

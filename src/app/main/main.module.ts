@@ -3,10 +3,11 @@ import {
   Cache,
   GlobleTooltip,
   IAjaxConfig,
-  IAjaxManagerResult
+  IAjaxManagerResult,
+  AjaxHeaders
 } from '@cui/core';
 import { AppCommonModule } from '../app-common/app-common.module';
-import { AuthUserNode, SubscriptionsNode } from 'ts/data/node/common';
+import { AuthUserNode, SubscriptionsNode, LangNode } from 'ts/data/node/common';
 import { BasicService } from 'ts/service/core/basic-service';
 import { CommonDialogModule } from './dialog/common-dialog/common-dialog.module';
 import { CommonModule } from '@angular/common';
@@ -129,6 +130,11 @@ export class MainModule {
   private ajaxBeforeRequest = (config: IAjaxConfig) => {
     if (!config.background) {
       Global.loader.open();
+    }
+    if (!config.headers) {
+      config.headers = new AjaxHeaders('Accept-Language', LangNode.get());
+    } else {
+      config.headers.append('Accept-Language', LangNode.get());
     }
   }
 
